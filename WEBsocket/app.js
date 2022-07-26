@@ -36,18 +36,30 @@ npm i nodemon -g
 
 const express = require("express");
 const fs = require("fs");
-const socket = require("socket.io");
+const socketio = require("socket.io");
 
 const app = express();
 
 const PORT = 3000;
 
-app.listen(PORT, () => {
+app.get("/", (req, res) => {
+  fs.readFile("page.html", (err, data) => {
+    res.end(data);
+  });
+});
+
+const server = app.listen(PORT, () => {
   console.log(PORT, "번 포트 사용중");
 });
 
-app.get("/", (req, res) => {
-  fs.redFile("page.html", (err, data) => {
-    res.end(data);
-  });
+// socketio(매개변수) 매개변수는 express server
+// 소켓 서버를 생성 및 실행
+const io = socketio(server);
+/*
+socketio 사용해서 연결
+connection 클라이언트가 웹소켓 서버에 접속할 때 발생
+on 함수로 connection 이벤트에 매칭해서 소켓 이벤트 연결
+*/
+io.sockets.on("connection", (socket) => {
+  console.log("유저가 접속함");
 });
