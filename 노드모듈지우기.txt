@@ -1,0 +1,10 @@
+git rm  :  원격, 로컬 저장소 모두 삭제
+
+git rm --cached : 원격 저장소에서만 삭제 
+
+로컬에서는 node_modules가 필요하기 때문에 
+
+git rm --cached -r node_modules 이렇게 해주면 된다. (-r은 하위 폴더에도 적용하겠다는 옵션이다.)
+
+ex) git rm --cached -r /WEBsocket/node_modules
+ 
