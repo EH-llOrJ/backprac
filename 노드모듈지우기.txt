@@ -6,5 +6,5 @@ git rm --cached : 원격 저장소에서만 삭제
 
 git rm --cached -r node_modules 이렇게 해주면 된다. (-r은 하위 폴더에도 적용하겠다는 옵션이다.)
 
-ex) git rm --cached -r /WEBsocket/node_modules
+ex) git rm --cached -r WEBsocket/node_modules
  
