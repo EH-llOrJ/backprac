@@ -1,4 +1,5 @@
 /*
+npm init
 사용할 모듈
 socketio, express, fs, nodemon
 영화관 좌석 예약 만들 것
