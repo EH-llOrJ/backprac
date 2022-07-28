@@ -64,6 +64,16 @@
         left: 50%;
         transform: translate(-50%, -50%);
       }
+
+      .join_text {
+        background-color: deeppink;
+        border: 1px solid palevioletred;
+      }
+
+      .leave_text {
+        background-color: greenyellow;
+        border: seagreen;
+      }
       #main {
         display: none;
       }
@@ -79,8 +89,8 @@
       </div>
       <div id="main">
         <select id="rooms">
-          <option value="">병아리 방</option>
-          <option value="">개구리 방</option>
+          <option value="병아리 방">병아리 방</option>
+          <option value="개구리 방">개구리 방</option>
         </select>
         <ul id="messages"></ul>
         <div id="send">
@@ -92,7 +102,6 @@
   </body>
   <script>
     // io.connect() 클라이언트가 접속하는 함수
-    const socket = io.connect();
 
     window.onload = function () {
       loginbtn.onclick = function () {
@@ -128,11 +137,24 @@
 
         socket.on("leaveRoom", (room, name) => {
           messages.innerHTML += `
-            <li class="join_text">
+            <li class="leave_text">
                 ${name}님 ${room}에 나가셨습니다.
             </li>
             `;
         });
+
+        socket.on("chat", (name, msg) => {
+          messages.innerHTML += `
+            <li>
+                ${name} : ${msg}
+            </li>
+            `;
+        });
+
+        sendbtn.onclick = function () {
+          socket.emit("chat", room, name, msg.value);
+          msg.value = "";
+        };
       };
     };
   </script>
