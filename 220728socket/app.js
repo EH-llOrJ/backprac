@@ -20,7 +20,7 @@ const app = express();
 // 대기상태
 // const server = app.listen(3000);
 const server = app.listen(3000, () => {
-  console.log(3000, "번에 잘 열렸다");
+  console.log(3000, "번 포트 열림");
   // 콜백함수로 잘 열린지 확인
 });
 // -------------------------------
@@ -38,8 +38,21 @@ app.get("/", (req, res) => {
 });
 
 // 클라이언트가 접속 했을 때 connection
-io.on("connetion", (socket) => {
+io.on("connection", (socket) => {
+  console.log(socket);
   console.log("유저 접속");
+  socket.on("joinRoom", (room, name) => {
+    // 방개념으로 접속 시켜주는 함수 join(방이름)
+    socket.join(room);
+    // to(room) 현재 그 방에 있는 클라이언트에게 요청
+    io.to(room).emit("joinRoom", room, name);
+  });
+
+  socket.on("leaveRoom", (room, name) => {
+    // 방개념으로 떠나게 해주는 함수 leave(방 이름)
+    socket.leave(room);
+    io.to(room).emit("leaveRoom", room, name);
+  });
 });
 
 /*

@@ -83,7 +83,7 @@
           <option value="">개구리 방</option>
         </select>
         <ul id="messages"></ul>
-        <div>
+        <div id="send">
           <input id="msg" />
           <button id="sendbtn">보냄</button>
         </div>
@@ -100,8 +100,39 @@
         main.style.display = "block";
         const name = username.value;
         // rooms이게 select 태그고 options가 select안에 있는 option들
+        // options 이건 배열
+        // rooms가 select 태그인데 selectedIndex 이건 선택되어있는 옵션의 인덱스
+        // console.log(rooms.options[0].value);
+        console.log(rooms.options);
+        console.log(rooms.selectedIndex);
         let room = rooms.options[rooms.selectedIndex].value;
         const socket = io.connect();
+        socket.emit("joinRoom", room, name);
+
+        rooms.onchange = function (e) {
+          let el = e.target;
+          //   console.log(el.options);
+          console.log(el.selectedIndex);
+          socket.emit("leaveRoom", room, name);
+          room = rooms.options[rooms.selectedIndex].value;
+          socket.emit("joinRoom", room, name);
+        };
+
+        socket.on("joinRoom", (room, name) => {
+          messages.innerHTML += `
+            <li class="join_text">
+                ${name}님 ${room}에 들어오셨습니다.
+            </li>
+            `;
+        });
+
+        socket.on("leaveRoom", (room, name) => {
+          messages.innerHTML += `
+            <li class="join_text">
+                ${name}님 ${room}에 나가셨습니다.
+            </li>
+            `;
+        });
       };
     };
   </script>
