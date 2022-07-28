@@ -66,12 +66,12 @@
       }
 
       .join_text {
-        background-color: deeppink;
+        background-color: royalblue;
         border: 1px solid palevioletred;
       }
 
       .leave_text {
-        background-color: greenyellow;
+        background-color: rosybrown;
         border: seagreen;
       }
       #main {
@@ -102,6 +102,7 @@
   </body>
   <script>
     // io.connect() 클라이언트가 접속하는 함수
+    const socket = io.connect();
 
     window.onload = function () {
       loginbtn.onclick = function () {
@@ -115,7 +116,6 @@
         console.log(rooms.options);
         console.log(rooms.selectedIndex);
         let room = rooms.options[rooms.selectedIndex].value;
-        const socket = io.connect();
         socket.emit("joinRoom", room, name);
 
         rooms.onchange = function (e) {
