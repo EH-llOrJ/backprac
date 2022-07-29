@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .line {
+        overflow: hidden;
+      }
+      .seat {
+        margin: 2px;
+        float: left;
+        width: 30px;
+        height: 30px;
+        border-radius: 3px;
+      }
+      .enable {
+        background-color: gray;
+      }
+      .enable:hover {
+        background-color: rgb(195, 190, 190);
+      }
+      .disable {
+        background-color: skyblue;
+      }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  </head>
+  <body>
+    <div>영화관</div>
+  </body>
+  <script>
+    const socket = io.connect();
+    socket.on("reserve", (data) => {
+      let $target = $("div[data-x = " + data.x + "][data-y =" + data.y + "]");
+      $target.removeClass("enable");
+      $target.addClass("disable");
+    });
+
+    $(window).ready(function () {
+      const onClickSeat = function () {
+        if ($(this).hasClass("disable")) {
+          return;
+        }
+        let x = $(this).attr("data-x");
+        let y = $(this).attr("data-y");
+        if (confirm("이 좌석 예매하시나요?")) {
+          socket.emit("reserve", {
+            x,
+            y,
+          });
+        } else {
+          alert("취소 되었습니다.");
+        }
+      };
+
+      getseats(2);
+      function getseats(selectIndex) {
+        $.getJSON(
+          "/seats/" + selectIndex,
+          { dummy: new Date().getTime() },
+          (data) => {
+            $.each(data, (indexY, line) => {
+              let $line = $("<div></div>").addClass("line");
+
+              $.each(line, (indexX, seat) => {
+                let $output = $("<div></div>", {
+                  class: "seat",
+                  "data-x": indexX,
+                  "data-y": indexY,
+                }).appendTo($line);
+                if (seat == 1) {
+                  $output.addClass("enable").on("click", onClickSeat);
+                } else if (seat == 2) {
+                  $output.addClass("disable");
+                }
+              });
+              $line.appendTo("body");
+            });
+          }
+        );
+      }
+    });
+  </script>
+</html>
