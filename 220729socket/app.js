@@ -61,7 +61,8 @@ app.get("/seats/:id", (req, res) => {
 
 io.sockets.on("connection", (socket) => {
   socket.on("reserve", (data) => {
-    seats[data.y][data.x] = 2;
+    let seatsTemp = seatsArr[data.selectCount];
+    seatsTemp[data.y][data.x] = 2;
     io.sockets.emit("reserve", data);
   });
 });

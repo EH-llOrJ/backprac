@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
+      #title {
+        margin: 10px 10px;
+        font-size: 30px;
+      }
       .line {
         overflow: hidden;
       }
@@ -30,17 +34,36 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
   </head>
   <body>
-    <div>영화관</div>
+    <div id="title">버스</div>
+    <select id="selectBtn">
+      <option value="0">1시</option>
+      <option value="1">2시</option>
+      <option value="2">3시</option>
+    </select>
+    <div id="content"></div>
   </body>
   <script>
     const socket = io.connect();
+
     socket.on("reserve", (data) => {
-      let $target = $("div[data-x = " + data.x + "][data-y =" + data.y + "]");
-      $target.removeClass("enable");
-      $target.addClass("disable");
+      // x y selectIndex
+      console.log(data.selectCount);
+      console.log(selectBtn.selectedIndex);
+      if (data.selectCount == selectBtn.selectedIndex) {
+        let $target = $("div[data-x = " + data.x + "][data-y =" + data.y + "]");
+        $target.removeClass("enable");
+        $target.addClass("disable");
+      }
     });
 
+    let selectCount = 0;
     $(window).ready(function () {
+      // 지금 작업중인 부분
+      selectBtn.onchange = function () {
+        content.innerHTML = "";
+        selectCount = this.selectedIndex;
+        getseats(this.selectedIndex);
+      };
       const onClickSeat = function () {
         if ($(this).hasClass("disable")) {
           return;
@@ -51,13 +74,14 @@
           socket.emit("reserve", {
             x,
             y,
+            selectCount,
           });
         } else {
           alert("취소 되었습니다.");
         }
       };
 
-      getseats(2);
+      getseats(0);
       function getseats(selectIndex) {
         $.getJSON(
           "/seats/" + selectIndex,
@@ -78,7 +102,7 @@
                   $output.addClass("disable");
                 }
               });
-              $line.appendTo("body");
+              $line.appendTo(content);
             });
           }
         );
