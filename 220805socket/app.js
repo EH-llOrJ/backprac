@@ -89,3 +89,54 @@ app.get("/shop", (req, res) => {
     })
   );
 });
+
+let cart = [];
+// 소켓 이벤트 연결
+// connection 클라이언트가 접속했을 때
+io.on("connection", (socket) => {
+  // 상품 구매 취소했을 때 돌리는 함수
+  function onReturn(index) {
+    // 물건의 갯수를 다시 돌린다. 더해준다.
+    products[index].count++;
+    // 물건을 제거
+    // 배열 안의 값 제거 delete 배열[인덱스]
+    delete cart[index];
+    let count = products[index].count;
+
+    io.emit("count", {
+      index,
+      count,
+    });
+  }
+
+  // 이벤트 연결 웹소켓이 가지고 있는 이벤트
+  socket.on("cart", (index) => {
+    // 물건의 갯수를 감소
+    products[index].count--;
+    // 빈 객체를 하나 만들어서 해당 배열에 인덱스 자리에 넣고
+    cart[index] = {};
+    // 해당 배열의 인덱스 자리에 있는 객체에 index 키를 추가하고 밸류를 넣어준다.
+    cart[index].index = index;
+    let count = products[index].count;
+
+    io.emit("count", {
+      index,
+      count,
+    });
+  });
+
+  // 구매 했을 때 이벤트 연결
+  socket.on("buy", (index) => {
+    // 카트의 해당 상품 번호 인덱스 제거
+    delete cart[index];
+    let count = products[index].count;
+    io.emit("count", {
+      index,
+      count,
+    });
+  });
+
+  socket.on("return", (index) => {
+    onReturn(index);
+  });
+});

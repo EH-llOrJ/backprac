@@ -39,7 +39,7 @@ app.get("/", (req, res) => {
 
 // 클라이언트가 접속 했을 때 connection
 io.on("connection", (socket) => {
-  console.log(socket);
+  // console.log(socket);
   console.log("유저 접속");
   socket.on("joinRoom", (room, name) => {
     // 방개념으로 접속 시켜주는 함수 join(방이름)
