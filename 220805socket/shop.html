@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <script src="/socket.io/socket.io.js"></script>
+  <body>
+    상점 페이지
+    <div class="content">
+      <ul
+        id="listview"
+        data-role="listview"
+        data-inset="true"
+        data-filter="true"
+      >
+        <li data-role="list-divider">products</li>
+        <% products.forEach(function(item, index) { %>
+          <li class="product" data-index="<%= item.index %>">
+            <a href="#">
+              <!-- #넣으면 페이지 맨 위로 올라가는 거 없어도 상관 무 -->
+              <img src="src/1.png" alt="">
+              <h3><%= item.name %></h3>
+              <h3><%= item.price %>원</h3>
+              <span id="ui-li-count"><% item.count %></span>
+            </a>
+            <a href="#" data-icon="heart" data-index="<%= item.index %>"></a>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+    <scrippt>
+  </body>
+</html>
