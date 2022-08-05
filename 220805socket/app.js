@@ -136,6 +136,7 @@ io.on("connection", (socket) => {
     });
   });
 
+  // 상품 구매를 취소했을 때
   socket.on("return", (index) => {
     onReturn(index);
   });
