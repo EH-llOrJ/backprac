@@ -55,9 +55,9 @@
           // class="ui-li-count"이 속성을 가진 태그를 선택
           // 'li[data-index = ' + index + ']이게 부모 태그 한칸 띄어쓰니까
           // class="ui-li-count"이 속성을 가진 자식
-          // document.querySelectorAll("li[data-index = " + index + "] .ul-li-count");와 같은 의미
-          // $("li[data-index = " + index + "] .ul-li-count").html(count);
-          $(".product").eq(index).find(".ul-li-count").html(count);
+          // document.querySelectorAll("li[data-index = " + index + "] .ui-li-count");와 같은 의미
+          // $("li[data-index = " + index + "] .ui-li-count").html(count);
+          $(".product").eq(index).find(".ui-li-count").html(count);
         }
 
         // 소켓 연결 생성
