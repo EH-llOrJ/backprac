@@ -85,7 +85,7 @@ app.get("/shop", (req, res) => {
 
   res.send(
     ejs.render(page, {
-      products: products,
+      products: products
     })
   );
 });
@@ -117,7 +117,7 @@ io.on("connection", (socket) => {
     cart[index] = {};
     // 해당 배열의 인덱스 자리에 있는 객체에 index 키를 추가하고 밸류를 넣어준다.
     cart[index].index = index;
-    let count = products[index].count;
+    let count = products.count;
 
     io.emit("count", {
       index,
