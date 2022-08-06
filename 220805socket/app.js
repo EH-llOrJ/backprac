@@ -117,7 +117,7 @@ io.on("connection", (socket) => {
     cart[index] = {};
     // 해당 배열의 인덱스 자리에 있는 객체에 index 키를 추가하고 밸류를 넣어준다.
     cart[index].index = index;
-    let count = products.count;
+    let count = products[index].count;
 
     io.emit("count", {
       index,
@@ -129,7 +129,7 @@ io.on("connection", (socket) => {
   socket.on("buy", (index) => {
     // 카트의 해당 상품 번호 인덱스 제거
     delete cart[index];
-    let count = products[index].count;
+    let count = products.count;
     io.emit("count", {
       index,
       count,
