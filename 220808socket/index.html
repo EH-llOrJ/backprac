@@ -17,6 +17,15 @@
     <input type="text" id="cookieSelect" />
     <button id="cookieView">조회</button>
     <input type="text" readonly id="cookie" />
+
+    <div id="cookieAllView"></div>
+    <button id="AllViewBtn">전체 쿠키 보기</button>
+
+    <input type="text" id="activeCookie" />
+    <button id="activeBtn">쿠키 확인</button>
+
+    <input type="text" id="cookieDelete" />
+    <button id="DeleteBtn">쿠키 삭제</button>
   </body>
   <script src="app.js"></script>
   <script>
@@ -24,8 +33,26 @@
       // 매개변수 (이름, 값, 유효시간)
       createCookie(cookieName.value, cookieValue.value, 1);
     };
+
+    // 쿠키 전체 확인
     cookieView.onclick = function () {
       cookie.value = getCookie(cookieSelect.value);
+    };
+
+    // 쿠키 값 확인
+    AllViewBtn.onclick = function () {
+      cookieAllView.innerHTML = document.cookie;
+    };
+
+    // 쿠키 유무 확인
+    activeBtn.onclick = function () {
+      console.log(isActiveCookie(activeCookie.value));
+    };
+
+    // 쿠키 제거
+    DeleteBtn.onclick = function () {
+      isDeleteCookie(cookieDelete.value);
+      console.log(cookieDelete.value, "가 삭제 되었음");
     };
   </script>
 </html>

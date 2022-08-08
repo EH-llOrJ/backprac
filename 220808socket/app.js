@@ -59,7 +59,20 @@ let createCookie = function (name, value, time) {
 // 쿠키 값 가져오는 함수
 let getCookie = function (name) {
   // 현재 저장된 쿠키 중 name에 맞는 쿠키가 저장되어 있으면
-  let value = documet.cookie.match("(^|;) ?" + name + "=([^;]*)(;|$)");
+  let value = document.cookie.match("(^|;) ?" + name + "=([^;]*)(;|$)");
   // 있으면 값을 내보낸다.
+  // 콘솔로그로 value, value[0], value[1], value[2]를 확인해보면
+  // 쿠키의 값이 있는 인덱스가 2번이라서 2번 인덱스 값을 가져온다.
   return value ? value[2] : null;
+};
+
+// 쿠키 유무 확인 함수
+let isActiveCookie = function (key) {
+  return getCookie(key) != null ? true : false;
+};
+
+// 쿠키 제거 함수
+let isDeleteCookie = function (key) {
+  // 쿠키 제거 기능은 없기에 제일 예전 날짜를 넣어줘서 자동으로 삭제되게 만든다.
+  document.cookie = key + "=; expires = Thu, 01 Jan 1999 00:00:10 GMT";
 };
