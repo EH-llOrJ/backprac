@@ -85,7 +85,7 @@ app.get("/shop", (req, res) => {
 
   res.send(
     ejs.render(page, {
-      products: products,
+      products: products
     })
   );
 });
@@ -129,7 +129,7 @@ io.on("connection", (socket) => {
   socket.on("buy", (index) => {
     // 카트의 해당 상품 번호 인덱스 제거
     delete cart[index];
-    let count = products[index].count;
+    let count = products.count;
     io.emit("count", {
       index,
       count,
