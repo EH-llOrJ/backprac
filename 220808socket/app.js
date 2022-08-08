@@ -76,3 +76,31 @@ let isDeleteCookie = function (key) {
   // 쿠키 제거 기능은 없기에 제일 예전 날짜를 넣어줘서 자동으로 삭제되게 만든다.
   document.cookie = key + "=; expires = Thu, 01 Jan 1999 00:00:10 GMT";
 };
+
+/*
+세션
+
+사용자(브라우저)에서 들어오는 요구를 하나의 상태로 보고
+상태를 유지시키는 기술 브라우저를 종료할 때까지 유지된다.
+사용자가 웹 서버에 접속해 있는 상태를 세션
+웹 사이트에서 로그인했을 때 구매나 장바구니
+티켓을 보여주고 팔찌를 차고 끝나면 찢고
+
+로그인 사용자의 프로필 정보
+로그인 유무
+
+*/
+
+// 세션에 저장 setItem() 매개변수 키, 값
+sessionStorage.setItem("myItem", "저장할 데이터"); // 저장
+
+// 세션에 저장한 아이템을 가져오는 것 getItem() 매개변수 키값
+sessionStorage.getItem("myItem");
+
+// 세션이 몇 개 들어있는지 길이 구하는 방법
+sessionStorage.length; // 1
+
+// 세션의 아이템을 인덱스로 가져오기
+sessionStorage.key(0); // myItem
+
+sessionStorage.clear(); // 전체 삭제
