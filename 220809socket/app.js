@@ -69,7 +69,11 @@ app.post("/login", (req, res) => {
   // 로그인 하면 토큰 발급
   // 토큰을 만들어 보자
   // 우리가 지금은 넘길 정보가 없으니까 변수로 만들기
+  // .env 파일을 쓰는 이유 데이터 유출을 막기 위해
+  // .env 애플리케이션이 실행될 때 처음부터 특정 값을 넘길
+  // 변수를 저장해놓는다.
   const name = "hahahaha";
+  const key = process.env.KEY;
   let token = jwt.sign(
     {
       // 타입 JWT임
@@ -77,7 +81,7 @@ app.post("/login", (req, res) => {
       // 유저 이름
       name: name,
     },
-    "whatawatwtawhwa",
+    key,
     {
       // 토큰 유효 시간 만료될 시간 5분
       expiresIn: "5m",
