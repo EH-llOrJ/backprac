@@ -19,7 +19,7 @@ const session = require("express-session");
 // session-file-store 모듈을 가져오면서 함수 실행
 const FileStore = require("session-file-store")(session);
 const fs = require("fs");
-// dotenv 모듈 가져오기
+
 const jwt = require("jsonwebtoken");
 
 // page.js에서 내보낸 router를 받는다
