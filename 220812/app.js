@@ -74,7 +74,7 @@ const key2 = process.env.REFRESH_TOKEN_KEY;
 app.post("/login", (req, res) => {
   // req.body 객체안에 있는
   // 아이디,비밀번호
-  // 키값으로 있는받아 놓기
+  // 키값으로 받아 놓기
   const { user_id, user_pw } = req.body;
   // 아이디 비밀번호 검증
   if (user_id === user.id && user_pw === user.password) {
