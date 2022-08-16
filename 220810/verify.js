@@ -9,7 +9,7 @@ const dot = require("dotenv");
 dot.config();
 
 // app.js에서 user() 함수로 요청 url을 설정해서
-// /userView url 부터 시작
+// /userView url 부터 시작 
 router.post("/", (req, res) => {
   // express session에서 token 가져와서 변수에 담고
   const token = req.session.token;

@@ -57,11 +57,14 @@ JWT의 구조
 // payload : 유저의 정보들과 만료 기간 포함된 객체를 가지고 있다.
 // signature : header, payload를 인코딩하고 합쳐서 비밀키로 해쉬
 
-// express, jsonwebtoken, nodemon, fs, body-parser
+// express, jsonwebtoken, nodemon, fs, body-parser, dotenv
 
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
+// dotenv 모듈 가져와서
+const dot = require("dotenv");
+dot.config();
 
 const app = express();
 // const app = require('express')(); 도 실행 가능
@@ -72,6 +75,11 @@ app.post("/login", (req, res) => {
   // .env 파일을 쓰는 이유 데이터 유출을 막기 위해
   // .env 애플리케이션이 실행될 때 처음부터 특정 값을 넘길
   // 변수를 저장해놓는다.
+
+  /*
+  env 사용할 때 설치할 모듈
+  npm i dotenv
+  */
   const name = "hahahaha";
   const key = process.env.KEY;
   let token = jwt.sign(
