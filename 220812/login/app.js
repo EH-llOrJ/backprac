@@ -165,51 +165,44 @@ const middleware = (req, res, next) => {
   jwt.verify(access_token, process.env.ACCESS_TOKEN, (err, acc_decoded) => {
     if (err) {
       // 썩은 토큰이면
-      // 여기서 로그인 페이지로 넘긴다든지
-      // 404 500 에러페이지를 만들어서 보여준다든지
-      // 본인의 방향성으로 페이지 구성하시면 됩니다.
-      res.send("다시 로그인 해주세요");
-    } else {
-      // 썩지 않고 좋은 토큰이면
-      console.log(acc_decoded);
-      // 다음번 콜백 함수 실행
-      // next();
-      if (acc_decoded == undefined) {
-        jwt.verify(
-          refresh_token,
-          process.env.REFRESH_TOKEN,
-          (err, ref_decoded) => {
-            if (err) {
-              res.send("다시 로그인 해주세요");
-            } else {
-              const sql = "SELECT * FROM users WHERE user_id=?";
-              client.query(sql, [ref_decoded.userId], (err, result) => {
-                if (err) {
-                  res.send("데이터 베이스 연결을 확인해주세요");
+      // 로그인 페이지로 넘긴다던지
+      // 404 500 에러페이지를 만들어 보여준다던지
+      // 본인의 생각대로 페이지 구성 하면됨
+      jwt.verify(
+        refresh_token,
+        process.env.REFRESH_TOKEN,
+        (err, ref_decoded) => {
+          if (err) {
+            res.send("다시 로그인 해주세요");
+          } else {
+            const sql = "SELECT * FROM users WHERE user_id=?";
+            client.query(sql, [ref_decoded.userId], (err, result) => {
+              if (err) {
+                res.send("데이터 베이스 연결을 확인해주세요");
+              } else {
+                if (result[0]?.refresh == refresh_token) {
+                  const accessToken = jwt.sign(
+                    {
+                      userId: ref_decoded.userId,
+                    },
+                    process.env.ACCESS_TOKEN,
+                    {
+                      expiresIn: "5s",
+                    }
+                  );
+                  req.session.access_token = accessToken;
+                  // 다음 콜백 실행
+                  next();
                 } else {
-                  if (result[0]?.refresh == refresh_token) {
-                    const access_Token = jwt.sign(
-                      {
-                        userId: ref_decoded.userId,
-                      },
-                      process.env.ACCESS_TOKEN,
-                      {
-                        expiresIn: "5s",
-                      }
-                    );
-                    req.session.access_token = accessToken;
-                    next();
-                  } else {
-                    res.send("다시 로그인");
-                  }
+                  res.send("다시 로그인 해주세요");
                 }
-              });
-            }
+              }
+            });
           }
-        );
-      } else {
-        next();
-      }
+        }
+      );
+    } else {
+      next();
     }
   });
 };
