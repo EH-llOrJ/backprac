@@ -35,9 +35,7 @@ crypto
 crypto 모듈 가져오기
 
 */
-const { rejects } = require("assert");
 const crypto = require("crypto");
-const { resolve } = require("path");
 // 임의의 비밀번호
 const pw = "4565165";
 
@@ -57,7 +55,7 @@ let hasString = hashing.digest("base64");
 // 인코딩할 알고리즘을 넣어준 것이 base64
 // digest함수를 사용해서
 // 해싱된 객체를 base64를 통해 문자열로 반환해준다.
-console.log(hasString);
+// console.log(hasString);
 
 // 지금 이렇게만 해쉬 알고리즘으로 암호화하면 같은 값이 들어가면
 // 암호화된 문자열도 계속 같기 때문에 암호화의 효과가 좀 안좋다.
@@ -138,7 +136,7 @@ pbkdf
 const createSalt = () => {
   // 암호화를 처리하는데 시간이 걸리기 때문에
   // Promise를 사용해서 비동기 처리를 한다.
-  new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     crypto.randomBytes(64, (err, byte) => {
       if (err) {
         // 실패시
@@ -154,7 +152,7 @@ const createSalt = () => {
 // 비밀번호를 해싱 해주는 함수
 const pwHashed = (userId, password) => {
   // promise를 이용해서 비동기 처리
-  new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     // 유저 테이블에서 user_id의 값이 있는지 확인
     const sql = "SELECT * FROM users WHERE user_id=?";
     // 쿼리문 실행 유저 아이디 찾고
@@ -177,7 +175,7 @@ const pwHashed = (userId, password) => {
 
 const createPwHashed = (password) => {
     // 비동기 처리
-    new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject)=>{
         const salt = await createSalt(); // 여기서 소금 만들고
         // 여기서 651665165만큼 반복시키는데 키 스트레칭
         // 비밀번호에 문자를 더해서 암호화시키는 기법 salt 사용
