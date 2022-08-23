@@ -21,7 +21,7 @@ const session = require("express-session");
 const mysql = require("mysql2");
 const ejs = require("ejs");
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 // app.use(express.static('cssandejs')); 선언해줘야지 폴더 경로를 인식함
 app.use(express.urlencoded({ extended: false })); // req.body 객체를 사용할 것이기 때문에 express 12버전쯤인가 버전업 되면서 express 설정으로 body 객체를 사용하게 설정할 수 있다.
@@ -90,11 +90,131 @@ app.post("/join", (req, res) => {
   });
 });
 
+// 로그인
 app.post("/login", (req, res) => {
   const { userId, password } = req.body;
-  res.send(userId + password);
+  // res.send(userId + password);
+  const sql = "SELECT * FROM users WHERE user_id=?";
+  client.query(sql, [userId], (err, result) => {
+    if (err) {
+      res.send("계정 없음");
+    } else {
+      // result[0]에 값이 있으면 계정이 존재한다는 뜻. 아니면 계정이 없다.
+      // ?. 구문 뒤에 키값이 있는지 먼저 보고 값을 참조한다. 그래서 없으면 터지는 일(크래쉬)을 방지
+      if (result[0] && password === result[0]?.password) {
+        // 로그인 성공했으니까 토큰 발급
+        // access token 발급
+        const accessToken = jwt.sign(
+          {
+            // payload 값 전달할 값
+            userId: result[0].user_Id,
+            mail: "jth4115@naver.com",
+            name: "th",
+          },
+          // ACCESS_TOKEN 비밀키
+          process.env.ACCESS_TOKEN,
+          {
+            expiresIn: "5s",
+          }
+        );
+        // refresh token 발급
+        const refreshToken = jwt.sign(
+          {
+            // payload 값 전달할 값
+            // 유저의 아이디만
+            userId: result[0].user_Id,
+          },
+          process.env.REFRESH_TOKEN,
+          {
+            expiresIn: "1m",
+          }
+        );
+        // UPDATE users SET refresh = user테이블의 refresh 값을 수정
+        // WHERE user_id? = user_id 값으로 검색
+        const sql = "UPDATE users SET refresh=? WHERE user_id=?";
+        client.query(sql, [refreshToken, userId]);
+        // 세션에 accessToken 값을 access_token 키값에 밸류로 할당
+        req.session.access_token = accessToken;
+        // 세션에 refreshToken 값을 refresh_token 키값에 밸류로 할당
+        req.session.refresh_token = refreshToken;
+        res.send({ access: accessToken, refresh: refreshToken });
+      } else {
+        res.send("계정 없음");
+      }
+    }
+  });
+});
+
+/*
+미들웨어란
+로그인을 해서 어서오세요 환영합니다 로그인이 유지되어 있는 페이지에 접속되고
+로그인이 유지 되고 있는 동안에만 동작해야하는 페이지들이 있는데, 로그인 유지를 확인하고 요청을 보내야 한다.
+미드웨어란 간단하게 클라이언트에게 요청이 오고 그 요청을 보내기 위해 응답하는 중간(미들)에 목적에 맞게 처리해주는
+중간단계 통과하는 미들웨어 함수이다. 요청의 응답에 도달하기 위해서 미들웨어를 통과해야지 응답까지 도달할 수 있다.
+중간에 문지기 얘의 허락을 맡아야 지나갈 수 있다. 액세스 권한
+req(요청)객체, res(응답)객체, next() 함수를 이용해서 통과 요청을 넘길 수 있다. 너 지나가 = next();
+요청을 처리하기 전에 중간에 기능을 동작시켜주는 것
+
+*/
+// 매개 변수는 (요청 객체, 응답 객체, next 함수)
+const middleware = (req, res, next) => {
+  // const access_Token = req.session.access_token;
+  // const refresh_Token = req.session.refresh_token; 두 줄을 아래처럼 한 줄로 줄일 수 있음
+  const { access_token, refresh_token } = req.session;
+  // access_token 값을 먼저 검증한다 유효 기간이 끝나지 않았는지 안 썩었는지
+  jwt.verify(access_token, process.env.ACCESS_TOKEN, (err, acc_decoded) => {
+    if (err) {
+      // 썩은 토큰이면
+      // 로그인 페이지로 넘긴다던지
+      // 404 500 에러페이지를 만들어 보여준다던지
+      // 본인의 생각대로 페이지 구성 하면됨
+      jwt.verify(
+        refresh_token,
+        process.env.REFRESH_TOKEN,
+        (err, ref_decoded) => {
+          if (err) {
+            res.send("다시 로그인 해주세요");
+          } else {
+            const sql = "SELECT * FROM users WHERE user_id=?";
+            client.query(sql, [ref_decoded.userId], (err, result) => {
+              if (err) {
+                res.send("데이터 베이스 연결을 확인해주세요");
+              } else {
+                if (result[0]?.refresh == refresh_token) {
+                  const accessToken = jwt.sign(
+                    {
+                      userId: ref_decoded.userId,
+                    },
+                    process.env.ACCESS_TOKEN,
+                    {
+                      expiresIn: "5s",
+                    }
+                  );
+                  req.session.access_token = accessToken;
+                  // 다음 콜백 실행
+                  next();
+                } else {
+                  res.send("다시 로그인 해주세요");
+                }
+              }
+            });
+          }
+        }
+      );
+    } else {
+      next();
+    }
+  });
+};
+
+// middleware이 미들웨어 함수에서 next() 함수를 사용하지 못하면
+// 다음 콜백함수는 실행되지 않는다.
+// next() 함수를 실행하면 다음 콜백으로 이동해서 요청 및 응답 작업을 동작을 한다.
+// 로그인이 되어있는 페이지만 요청과 응답할 수 있게
+app.get("/check", middleware, (req, res) => {
+  res.send("로그인 되어있음");
 });
 
 app.listen(PORT, () => {
-  console.log("서버 열림");
+  console.log(PORT, "서버 열림");
 });
