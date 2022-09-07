@@ -104,4 +104,49 @@ EC2 우분투에 설치한 mysql의 접속 옵션과 동일하게 바꿔준다.
 git remote add origin 깃 저장소 주소
 git pull origin main
 pull 받아서 파일 갱신
+
+nodejs를 설치합니다
+
+sudo apt-get update
+sudo apt-get install -y build-essential
+sudo apt-get install curl
+curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash --
+sudo apt-get install -y nodejs
+
+EC2 포트 포워딩
+뒤에 포트번호 안보이게 접속
+
+http 80, http 443 포트
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 3000
+dport 80, --to-port 3000 = 80포트로 접속하면 3000포트로 재매핑
+
+그렇다면 나는? sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+
+포트포워딩을 확인하는 명령어
+sudo iptables -t nat -L --line-numbers
+
+포트포워딩 삭제 명령어
+sudo iptables -t nat -D PREROUTING 인덱스 번호
+
+/////////////////////////////// 여기서 부터
+// pm2 설치 명령어 npm i pm2
+
+// packjson.json에 start 부분을 pm2 start app.js로 변경
+
+// pm2 설치 서버가 종료되어도 노드 서버 실행
+
+// npx pm2 monit : 상태 불러오기. (list, logs, custom metrics, metadata 등이 나옴)
+
+// npx pm2 logs : 모든 로그 불러오기.
+
+// npx pm2 logs --error : 에러 로그 불러오기.
+
+// npx pm2 list : 리스트(npm start 하면 나왔던 표) 불러오기.
+
+// npx pm2 kill : pm2 종료
+
+// npx pm2 start app.js : app.js 실행
+
+// npx pm2 reload all : 서버 재시작
+
 */
