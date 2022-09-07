@@ -99,7 +99,7 @@ pbkdf
 해시함수에 salt를 적용해서 해시함수의 반복횟수를 지정해서
 암호화 할 수 있고 IOS 표준에 적합하며 NIST에서 승인된 알고리즘이다
 
-scrypto
+scrypt
 얘는 좀 센 친구
 강력은 하지만 많은 메모리와 CPU를 잡아먹어서
 역효과가 날 수도 있다, 부하가 걸릴 수도 있다.
@@ -107,7 +107,7 @@ scrypto
 OpenSSL 1.1이상을 제공하는 시스템에서만 사용할 수 있다.
 주어진 자원에서 공격자가 사용할 수 있는 병렬 처리 양이 한정되어 있다.
 
-bcrypto
+bcrypt
 보안에 집착하기로 유명한 OpenBSD에서 사용하고
 .NET 및 자바를 포함한 많은 플랫폼 언어에서도 사용할 수 있다.
 반복횟수를 늘려 연산속도 늦출 수 있어서 연산 능력이 증가해도
@@ -162,8 +162,8 @@ const pwHashed = (userId, password) => {
             // 여기서 결과값은 해당 유저의 객체고 그 안에 salt 값을 가져온다.
             const salt = await result[0].salt;
             // pbkdf2 암호화를 하는데 해싱 알고리즘은 sha512이거
-            // 길이 : 64, 반복 횟수 : 521215
-            crypto.pbkdf2(password,salt,521215,64,"sha512",(err,key)=>{
+            // 길이 : 64, 반복 횟수 : 58192
+            crypto.pbkdf2(password,salt,58192,64,"sha512",(err,key)=>{
                 resolve(key.toString('base64'))
             })
         } else {
@@ -177,10 +177,10 @@ const createPwHashed = (password) => {
     // 비동기 처리
     return new Promise((resolve, reject)=>{
         const salt = await createSalt(); // 여기서 소금 만들고
-        // 여기서 651665165만큼 반복시키는데 키 스트레칭
+        // 여기서 19856만큼 반복시키는데 키 스트레칭
         // 비밀번호에 문자를 더해서 암호화시키는 기법 salt 사용
         // 여기서 salt는 랜덤값이다 랜덤 바이트 함수로 만들어낸
-        crypto.pbkdf2(password,salt,651665165,64,"sha512",(err,key)=>{
+        crypto.pbkdf2(password,salt,19856,64,"sha512",(err,key)=>{
             if(err) {
                 reject("err");
             } else {
@@ -241,3 +241,4 @@ app.post("/join", (req, res) => {
 app.listen(PORT, () => {
   console.log(PORT, "서버 열림");
 });
+

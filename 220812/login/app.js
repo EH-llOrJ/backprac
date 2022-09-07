@@ -23,6 +23,19 @@ const ejs = require("ejs");
 const app = express();
 const PORT = process.env.PORT;
 
+const bcrypt = require("bcrypt");
+// 처음부터 단방향으로 암호화 시켜주는 해시함수
+// bcrypt는 값이 4등분 나눠진다.
+// Algorithm : 알고리즘이 뭔지 "$2a$"는 bcrypt 라는 것이다.
+// cost factor : 키 스트레칭한 횟수. 2^n으로 반복시킨다. 10으로 사용하면 1024번
+// salt : 128비트의 솔트 22자 base64로 인코딩
+// hash : 솔트 기법과 키 스트레칭을 한 해시값
+
+// const pw = "1234";
+// bcrypt.hash(pw, 10, (err, data) => {
+//   console.log(data);
+// });
+
 // app.use(express.static('cssandejs')); 선언해줘야지 폴더 경로를 인식함
 app.use(express.urlencoded({ extended: false })); // req.body 객체를 사용할 것이기 때문에 express 12버전쯤인가 버전업 되면서 express 설정으로 body 객체를 사용하게 설정할 수 있다.
 app.use(
